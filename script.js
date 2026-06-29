@@ -14,8 +14,7 @@ async function startTrading() {
 
     try {
         const response = await fetch(
-            `https://finnhub.io/api/v1/quote?symbol=NSE:${symbol}&token=${API_KEY}`
-        );
+            https://finnhub.io/api/v1/quote?symbol=BINANCE:${symbol}USDT&token=${API_KEY}
 
         const data = await response.json();
 

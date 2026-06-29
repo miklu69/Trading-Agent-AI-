@@ -31,17 +31,32 @@
         const change = coin.inr_24h_change;
 
         let signal = "🟡 HOLD";
-        if (change > 2) signal = "🟢 BUY";
-        if (change < -2) signal = "🔴 SELL";
+        let entry = price;
+        let stoploss = price * 0.98;
+        let target = price * 1.05;
+
+        if (change > 2) {
+            signal = "🟢 BUY";
+            target = price * 1.08;
+        } else if (change < -2) {
+            signal = "🔴 SELL";
+            stoploss = price * 0.97;
+        }
 
         result.innerHTML = `
             <hr>
-            <h3>${symbol}</h3>
-            <b>Live Price:</b> ₹${price}<br>
-            <b>24h Change:</b> ${change.toFixed(2)}%<br>
-            <b>AI Signal:</b> ${signal}
+            <h2>${symbol}</h2>
+
+            <b>💰 Live Price:</b> ₹${price.toLocaleString()}<br>
+            <b>📈 24h Change:</b> ${change.toFixed(2)}%<br>
+            <b>🤖 AI Signal:</b> ${signal}<br><br>
+
+            <b>🎯 Entry:</b> ₹${Math.round(entry).toLocaleString()}<br>
+            <b>🛑 Stop Loss:</b> ₹${Math.round(stoploss).toLocaleString()}<br>
+            <b>🚀 Target:</b> ₹${Math.round(target).toLocaleString()}
         `;
+
     } catch (err) {
         result.innerHTML = "❌ Unable to fetch live crypto data.";
     }
-}
+ }

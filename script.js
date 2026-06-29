@@ -1,56 +1,47 @@
- function startTrading() {
-  const symbol = document.getElementById("symbol").value.toUpperCase();
-  const result = document.getElementById("result");
 
-  if (symbol === "") {
-    result.innerHTML = "⚠️ Enter a stock symbol";
-    return;
-  }
+const API_KEY = "d916r9hr01qr1uqu8hkgd916r9hr01qr1uqu8hl0";
 
-  let signal = "🟡 HOLD";
-  let entry = "-";
-  let stoploss = "-";
-  let target = "-";
+async function startTrading() {
+    const symbol = document.getElementById("symbol").value.toUpperCase().trim();
+    const result = document.getElementById("result");
 
-  switch(symbol){
-    case "RELIANCE":
-      signal="🟢 BUY";
-      entry="₹1480";
-      stoploss="₹1465";
-      target="₹1515";
-      break;
+    if (!symbol) {
+        result.innerHTML = "⚠️ Enter a stock symbol";
+        return;
+    }
 
-    case "TCS":
-      signal="🔴 SELL";
-      entry="₹3920";
-      stoploss="₹3950";
-      target="₹3860";
-      break;
+    result.innerHTML = "⏳ Loading...";
 
-    case "INFY":
-      signal="🟢 BUY";
-      entry="₹1640";
-      stoploss="₹1615";
-      target="₹1685";
-      break;
+    try {
+        const response = await fetch(
+            `https://finnhub.io/api/v1/quote?symbol=NSE:${symbol}&token=${API_KEY}`
+        );
 
-    case "SBIN":
-      signal="🟡 HOLD";
-      entry="Wait";
-      stoploss="-";
-      target="-";
-      break;
+        const data = await response.json();
 
-    default:
-      signal="❓ Stock Not Found";
-  }
+        if (!data.c) {
+            result.innerHTML = "❌ Stock not found";
+            return;
+        }
 
-  result.innerHTML=`
-  <hr>
-  <b>Stock :</b> ${symbol}<br>
-  <b>Signal :</b> ${signal}<br>
-  <b>Entry :</b> ${entry}<br>
-  <b>Stop Loss :</b> ${stoploss}<br>
-  <b>Target :</b> ${target}
-  `;
- }
+        let signal = "HOLD";
+
+        if (data.c > data.pc) {
+            signal = "🟢 BUY";
+        } else if (data.c < data.pc) {
+            signal = "🔴 SELL";
+        }
+
+        result.innerHTML = `
+            <hr>
+            <b>Stock:</b> ${symbol}<br>
+            <b>Current Price:</b> ₹${data.c}<br>
+            <b>Previous Close:</b> ₹${data.pc}<br>
+            <b>High:</b> ₹${data.h}<br>
+            <b>Low:</b> ₹${data.l}<br>
+            <b>AI Signal:</b> ${signal}
+        `;
+    } catch (e) {
+        result.innerHTML = "❌ Error loading live data";
+    }
+}

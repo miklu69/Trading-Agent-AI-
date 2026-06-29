@@ -2,9 +2,28 @@
 <html>
 <head>
 <title>Trading Agent AI</title>
+<link rel="stylesheet" href="style.css">
 </head>
-<body style="background:#111;color:white;text-align:center;font-family:Arial;">
+
+<body>
+
 <h1>📈 Trading Agent AI</h1>
-<p>Welcome!</p>
+
+<div class="card">
+  <h2>AI Trading Dashboard</h2>
+
+  <input id="symbol" type="text" placeholder="Enter Stock or Crypto">
+
+  <br><br>
+
+  <button onclick="startTrading()">
+    Analyze
+  </button>
+
+  <p id="result">Waiting for analysis...</p>
+</div>
+
+<script src="script.js"></script>
+
 </body>
 </html>

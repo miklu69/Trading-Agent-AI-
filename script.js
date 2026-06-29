@@ -1,46 +1,47 @@
-
-const API_KEY = "d916r9hr01qr1uqu8hkgd916r9hr01qr1uqu8hl0";
-
-async function startTrading() {
+ async function startTrading() {
     const symbol = document.getElementById("symbol").value.toUpperCase().trim();
     const result = document.getElementById("result");
 
     if (!symbol) {
-        result.innerHTML = "⚠️ Enter a stock symbol";
+        result.innerHTML = "⚠️ Enter BTC, ETH or SOL";
         return;
     }
 
-    result.innerHTML = "⏳ Loading...";
+    const coins = {
+        BTC: "bitcoin",
+        ETH: "ethereum",
+        SOL: "solana"
+    };
+
+    if (!coins[symbol]) {
+        result.innerHTML = "❌ Supported: BTC, ETH, SOL";
+        return;
+    }
+
+    result.innerHTML = "⏳ Loading live price...";
 
     try {
-        const response = await fetch(
-            https://finnhub.io/api/v1/quote?symbol=BINANCE:${symbol}USDT&token=${API_KEY}
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coins[symbol]}&vs_currencies=inr&include_24hr_change=true`;
 
+        const response = await fetch(url);
         const data = await response.json();
 
-        if (!data.c) {
-            result.innerHTML = "❌ Stock not found";
-            return;
-        }
+        const coin = data[coins[symbol]];
+        const price = coin.inr;
+        const change = coin.inr_24h_change;
 
-        let signal = "HOLD";
-
-        if (data.c > data.pc) {
-            signal = "🟢 BUY";
-        } else if (data.c < data.pc) {
-            signal = "🔴 SELL";
-        }
+        let signal = "🟡 HOLD";
+        if (change > 2) signal = "🟢 BUY";
+        if (change < -2) signal = "🔴 SELL";
 
         result.innerHTML = `
             <hr>
-            <b>Stock:</b> ${symbol}<br>
-            <b>Current Price:</b> ₹${data.c}<br>
-            <b>Previous Close:</b> ₹${data.pc}<br>
-            <b>High:</b> ₹${data.h}<br>
-            <b>Low:</b> ₹${data.l}<br>
+            <h3>${symbol}</h3>
+            <b>Live Price:</b> ₹${price}<br>
+            <b>24h Change:</b> ${change.toFixed(2)}%<br>
             <b>AI Signal:</b> ${signal}
         `;
-    } catch (e) {
-        result.innerHTML = "❌ Error loading live data";
+    } catch (err) {
+        result.innerHTML = "❌ Unable to fetch live crypto data.";
     }
 }

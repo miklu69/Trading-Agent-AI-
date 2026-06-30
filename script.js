@@ -60,3 +60,9 @@
         result.innerHTML = "❌ Unable to fetch live crypto data.";
     }
  }
+setInterval(() => {
+    const symbol = document.getElementById("symbol").value.trim();
+    if (symbol !== "") {
+        startTrading();
+    }
+}, 10000);
